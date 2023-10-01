@@ -1,0 +1,136 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+{%for post in posts%}
+    <div> 
+        <div data-likes={{post.liked_by.all|length}}>{{post.liked_by.all|length}}</div>
+        <div class="content-div">{{post.content}}</div>
+        <div class="edit-area"  data-content={{post.content}} style="display: none;">
+            <textarea  cols="30" rows="10" ></textarea>
+            <button class="post" data-pk={{post.id}}>post</button>
+
+        </div>
+        {%if request.user != post.owner %}
+        <button class="like" data-id="{{post.id}}">{%if request.user in post.liked_by.all%}unlike{%else%}like{%endif%}</button>
+        {%endif%}
+        {%if request.user == post.owner%}
+        <button class="edit">edit</button>
+        {%endif%}
+    </div>
+{%endfor%}
+<script>
+    document.addEventListener('DOMContentLoaded',()=>{
+        let like=document.querySelectorAll('.like')
+    function getCSRFToken() {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith("csrftoken=")) {
+            return cookie.substring("csrftoken=".length, cookie.length);
+        }
+    }
+    return null;
+}
+
+// Fetch the CSRF token
+const csrfToken = getCSRFToken();
+
+// Include CSRF token in headers for POST requests
+const headers = {
+    'X-CSRFToken': csrfToken,
+    'Content-Type': 'application/json',
+};
+    like.forEach(Element=>{
+        Element.addEventListener('click',(event)=>{
+            const clickedbutton=event.target
+            const likediv=clickedbutton.parentNode.childNodes[1]
+            console.log(likediv)
+            if(clickedbutton.innerHTML==='like'){
+                const unlikeHeaders = {
+                                ...headers,
+                            };
+                fetch('like/'+clickedbutton.dataset.id,{method:"POST",headers: unlikeHeaders,})
+                clickedbutton.innerHTML='unlike'
+                console.log(likediv.innerHTML)
+                likediv.innerHTML=parseInt(likediv.dataset.likes)+1
+                likediv.dataset.likes=parseInt(likediv.dataset.likes)+1
+            }
+            else if(clickedbutton.innerHTML==='unlike'){
+                const likeHeaders = {
+                                ...headers,
+                            };
+                fetch('unlike/'+clickedbutton.dataset.id,{method:"POST",headers: likeHeaders,})
+                clickedbutton.innerHTML='like'
+                likediv.innerHTML=parseInt(likediv.dataset.likes)-1
+                likediv.dataset.likes=parseInt(likediv.dataset.likes)-1
+                
+            }
+            
+        })
+    })
+    
+    let edit=document.querySelectorAll('.edit')
+    edit.forEach(Element=>{
+        Element.addEventListener('click',(event)=>{
+            const clicked_edit=event.target
+            const edit_area=clicked_edit.parentNode.childNodes[5]
+            const content_div=clicked_edit.parentNode.childNodes[3]
+            console.log(edit_area)
+            edit_area.style.display='block'
+            console.log(edit_area.childNodes[1])
+            console.log(edit_area.dataset.content)
+            edit_area.childNodes[1].value=edit_area.dataset.content
+
+            content_div.style.display='none'
+        })
+    })
+
+    let posts=document.querySelectorAll('.post')
+    posts.forEach(Element=>{
+        Element.addEventListener('click',(event)=>{
+            const clicked_post=event.target
+            const postData={
+
+                content: clicked_post.parentNode.childNodes[1].value,
+
+            }
+            const Jsondata=JSON.stringify(postData)
+            const postHeaders = {
+                                ...headers,
+                            };
+            fetch('update/'+clicked_post.dataset.pk,{
+                method:'POST',
+                headers: postHeaders,
+                body: Jsondata
+            })
+            .then(()=>{
+                fetch('pc/'+clicked_post.dataset.pk)
+            .then(responce=>{
+                return responce.json()
+            })
+            
+            .then(content=>{
+                console.log(content)
+                clicked_post.parentNode.parentNode.childNodes[3].innerHTML=content.content
+                console.log(clicked_post.parentNode.childNodes[1])
+                clicked_post.parentNode.dataset.content=content.content
+                console.log(clicked_post.parentNode.childNodes[1].dataset.content)
+                
+            })
+
+            })
+            
+            
+            clicked_post.parentNode.style.display='none'
+            clicked_post.parentNode.parentNode.childNodes[3].style.display="block"
+            
+
+            
+
+        })
+
+    })
+    
+    })
+</script>
+{% endblock %}
