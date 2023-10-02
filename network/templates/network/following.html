@@ -19,7 +19,7 @@
     
             </div>
             {%if request.user != post.owner %}
-            <button class="like" data-id="{{post.id}}">{%if request.user in post.liked_by.all%}unlike{%else%}like{%endif%}</button>
+            <button class="like btn btn-primary" data-id="{{post.id}}">{%if request.user in post.liked_by.all%}unlike{%else%}like{%endif%}</button>
             {%endif%}
             {%if request.user == post.owner%}
             <button class="edit btn btn-primary">edit</button>
