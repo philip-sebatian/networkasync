@@ -8,7 +8,7 @@
     {%for post in posts%}
     <br>
     <div style="background-color: black; display: flex;flex-direction: column;border-radius: 5px;height: 30vh;" class="container text-start">
-        <a href="{%url 'profile' id=post.owner.id pg=1%}" style="text-decoration: none;"> {{post.owner}} </a>
+        <a href="{%url 'profile' id=post.owner.id%}" style="text-decoration: none;"> {{post.owner}} </a>
         <span>Likes:</span>
         <div style="background-color: black;height: 25vh; display: flex;flex-direction: column; gap: 5px;"> 
             <div data-likes={{post.liked_by.all|length}}>{{post.liked_by.all|length}}</div>
