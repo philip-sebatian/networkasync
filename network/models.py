@@ -10,3 +10,4 @@ class Post(models.Model):
     content=models.CharField(max_length=1000)
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
     liked_by=models.ManyToManyField(User,symmetrical=False,related_name="liked_by",blank=True)
+    Date=models.DateTimeField(auto_now_add=True)

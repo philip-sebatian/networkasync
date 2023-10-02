@@ -13,13 +13,13 @@
         <div style="background-color: black;height: 25vh; display: flex;flex-direction: column; gap: 5px;"> 
             <div data-likes={{post.liked_by.all|length}}>{{post.liked_by.all|length}}</div>
             <div class="content-div" style="height: 10vh; width: 100%;background-color: rgb(71, 70, 70);">{{post.content}}</div>
-            <div class="edit-area"  data-content={{post.content}} style="display: none; ">
+            <div class="edit-area"  data-content="{{post.content}}" style="display: none; ">
                 <textarea  cols="30" rows="10" style="height: 10vh; width: 100%;" ></textarea>
                 <button class="post btn btn-primary"   data-pk={{post.id}}>save</button>
     
             </div>
             {%if request.user != post.owner %}
-            <button class="like" data-id="{{post.id}}">{%if request.user in post.liked_by.all%}unlike{%else%}like{%endif%}</button>
+            <button class="like btn-primary btn" data-id="{{post.id}}">{%if request.user in post.liked_by.all%}unlike{%else%}like{%endif%}</button>
             {%endif%}
             {%if request.user == post.owner%}
             <button class="edit btn btn-primary">edit</button>
@@ -39,7 +39,9 @@
 </div>
 </div>
 <script>
+    
     document.addEventListener('DOMContentLoaded',()=>{
+        
         let like=document.querySelectorAll('.like')
     function getCSRFToken() {
     const cookies = document.cookie.split(';');

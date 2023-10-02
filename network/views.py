@@ -13,7 +13,7 @@ import json
 from django.forms.models import model_to_dict
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
-
+import datetime
 
 
 def index(request):
@@ -73,7 +73,7 @@ def register(request):
     
 
 def allpost(request,pg):
-    objects=Post.objects.all()
+    objects=Post.objects.all().order_by('-Date')
     p=Paginator(objects,10)
     page=p.page(pg)
 
@@ -118,7 +118,7 @@ def post_content(request,id):
         
 def profile(request,id,pg):
     user=User.objects.get(id=id)
-    posts=Post.objects.filter(owner=user)
+    posts=Post.objects.filter(owner=user).order_by('-Date')
     p=Paginator(posts,10)
     page=p.page(pg)
     return render(request,'network/profile.html',{
@@ -149,7 +149,7 @@ def following(request,pg):
     posts=[]
    
     for i in request.user.following.all():
-        for j in Post.objects.filter(owner=i):
+        for j in Post.objects.filter(owner=i).order_by('-Date'):
             posts.append(j)
     print(posts)
     p=Paginator(posts,10)
@@ -159,3 +159,13 @@ def following(request,pg):
         'posts':page.object_list,'p':p
     })
 
+def create(request):
+    if request.method=="GET":
+        return render(request,'network/create.html')
+    if request.method=='POST':
+        data=request.POST
+        content=data['content']
+        
+        date=datetime.datetime.now()
+        post=Post.objects.create(owner=request.user,content=content)
+        return HttpResponseRedirect(reverse('allposts',args=[1]))

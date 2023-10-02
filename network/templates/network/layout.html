@@ -22,6 +22,9 @@
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'index' %}">All Posts</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'create' %}">CreatePost</a>
+                  </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{%url 'following' pg=1%}">Following</a>

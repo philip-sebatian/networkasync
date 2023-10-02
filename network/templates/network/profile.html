@@ -2,7 +2,7 @@
 
 {% block body %}
 <div class="container text-center" style="color: white;">
-    <h1>{{user.username}}</h1>
+    <h1 style="color: #06e0e0;">{{user.username}}</h1>
     {%if user != request.user%}
     {%if request.user not in user.followers.all %}
     <button id="follow" class="btn btn-primary" data-id={{user.id}}>follow</button>
@@ -11,7 +11,7 @@
     {%endif%}
     {%endif%}
     <br><br>
-    <h6>followers</h6>
+    <h5>Followers : {{user.followers.all|length}} &emsp;Following : {{user.following.all|length}}</h5>
     
 </div>
 <div style="display: flex; flex-direction: column;gap: 10px;background-color: rgb(71, 70, 70);border-radius: 5px;color: white;min-height: 90vh;" class="container text-start">
